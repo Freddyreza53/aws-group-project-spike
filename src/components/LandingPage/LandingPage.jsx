@@ -9,6 +9,18 @@ function LandingPage() {
   const [heading, setHeading] = useState('Welcome');
   const history = useHistory();
 
+  const imageForm = document.querySelector("#imageForm");
+  const imageInput = document.querySelector("#imageInput");
+
+  imageForm?.addEventListener("submit", async event => {
+    event.preventDefault();
+    const file = imageInput.files[0];
+    const { url } = await fetch("/s3Url").then(res => res.json())
+    console.log(url);
+  
+  })
+
+
   const onLogin = (event) => {
     history.push('/login');
   };
@@ -19,6 +31,11 @@ function LandingPage() {
 
       <div className="grid">
         <div className="grid-col grid-col_8">
+          <form action="submit">
+            <input type="file" accept="image/*"/>
+            <button type="submit">Upload</button>
+          </form>
+          
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
             id felis metus. Vestibulum et pulvinar tortor. Morbi pharetra lacus

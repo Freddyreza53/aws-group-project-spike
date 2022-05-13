@@ -1,7 +1,12 @@
+// import { generateUploadURL } from './s3';
+
 const express = require('express');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+
+const s3 = require('./s3');
+// const generateUploadURL = generateUploadURL();
 const app = express();
 
 const sessionMiddleware = require('./modules/session-middleware');
@@ -23,6 +28,11 @@ app.use(passport.session());
 
 /* Routes */
 app.use('/api/user', userRouter);
+
+app.get('/s3Url', async (req, res) => {
+  const url = await s3();
+  res.send({url})
+})
 
 // Serve static files
 app.use(express.static('build'));
