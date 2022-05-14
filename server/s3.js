@@ -1,13 +1,18 @@
 // import aws from 'aws-sdk';
 const aws = require('aws-sdk')
-const dotenv = require('dotenv')
+const cryptoRandomString = require('crypto-random-string');
+
+
 
 // const dotenv = require('dotenv');
 // import crypto, { randomBytes } from 'crypto';
 // import { promisify } from "util";
-
-dotenv.config();
 // const randomBytes = promisify(crypto.randomBytes)
+
+
+const dotenv = require('dotenv')
+dotenv.config();
+
 
 const region = "us-east-2";
 const bucketName = "spinal-stim-forum-test-bucket";
@@ -23,7 +28,8 @@ const s3 = new aws.S3({
 
 async function generateUploadURL() {
     // const rawBytes = await randomBytes(16);
-    const imageName = 'image Name'; //rawBytes.toString('hex');
+    //rawBytes.toString('hex');
+    const imageName = cryptoRandomString(16); 
     
     const params = ({
         Bucket: bucketName,

@@ -1,13 +1,22 @@
-import React from 'react';
+import React, { useRef} from 'react';
 import LogOutButton from '../LogOutButton/LogOutButton';
 import {useSelector} from 'react-redux';
 import {useState} from 'react'
 import 'react-dropzone-uploader/dist/styles.css'
 import Dropzone from 'react-dropzone-uploader'
+import { useDispatch } from 'react-redux';
+import ReactPlayer from 'react-player'
+
 
 function UserPage() {
-  // this component doesn't do much to start, just renders some user reducer info to the DOM
+  const vidRef = useRef(null);
+  const handlePlayVideo = () => {
+    vidRef.current.play();
+  }
+  
   const user = useSelector((store) => store.user);
+  const dispatch = useDispatch();
+  const image = useSelector(store => store.image)
 
   let imageUrl = ''
 
@@ -29,7 +38,7 @@ function UserPage() {
       const { url } = await fetch("/s3Url").then(res => res.json())
       console.log(url)
 
-      // post the image direclty to the s3 bucket
+      // post the image directly to the s3 bucket
       await fetch(url, {
         method: "PUT",
         headers: {
@@ -40,6 +49,12 @@ function UserPage() {
 
       imageUrl = url.split('?')[0]
       console.log(imageUrl)
+
+      dispatch({
+        type: 'SET_IMAGE',
+        payload: imageUrl
+      })
+
 
         // const img = document.createElement("img")
         // img.src = imageUrl
@@ -118,9 +133,25 @@ function UserPage() {
         getUploadParams={getUploadParams}
         onChangeStatus={handleChangeStatus}
         onSubmit={handleSubmit}
+        maxFiles={1}
+        inputContent={(files, extra) => (extra.reject ? 'Image, audio and video files only' : 'Click Here or Drag 1 Picture/Video')}
+        styles={{
+          dropzoneReject: { borderColor: 'red', backgroundColor: '#DAA' },
+          inputLabel: (files, extra) => (extra.reject ? { color: 'red' } : {}),
+          dropzone: { width: 400, minHeight: 300, maxHeight: 350 },
+          dropzoneActive: { borderColor: "green" }
+        }}
         accept="image/*,audio/*,video/*"
       />
-      <img src={imageUrl}/>
+      <img src={image}/>
+      <ReactPlayer 
+        url={image}
+        width='400px'
+        height='600px'
+        controls = {true}/>
+      {/* <video ref={vidRef}>
+        <source src={image} type="video/mp4" />
+      </video> */}
       {/* <form id="imageForm" onSubmit={uploadImage}>
         <input id="imageInput" type="file" accept="image/*"/>
         <button type="submit">Upload</button>
